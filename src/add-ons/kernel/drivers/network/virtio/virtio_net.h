@@ -32,29 +32,32 @@
 #define _VIRTIO_NET_H
 
 /* The feature bitmap for virtio net */
-#define VIRTIO_NET_F_CSUM	0x00001 /* Host handles pkts w/ partial csum */
-#define VIRTIO_NET_F_GUEST_CSUM 0x00002 /* Guest handles pkts w/ partial csum*/
-#define VIRTIO_NET_F_MAC	0x00020 /* Host has given MAC address. */
-#define VIRTIO_NET_F_GSO	0x00040 /* Host handles pkts w/ any GSO type */
-#define VIRTIO_NET_F_GUEST_TSO4	0x00080 /* Guest can handle TSOv4 in. */
-#define VIRTIO_NET_F_GUEST_TSO6	0x00100 /* Guest can handle TSOv6 in. */
-#define VIRTIO_NET_F_GUEST_ECN	0x00200 /* Guest can handle TSO[6] w/ ECN in.*/
-#define VIRTIO_NET_F_GUEST_UFO	0x00400 /* Guest can handle UFO in. */
-#define VIRTIO_NET_F_HOST_TSO4	0x00800 /* Host can handle TSOv4 in. */
-#define VIRTIO_NET_F_HOST_TSO6	0x01000 /* Host can handle TSOv6 in. */
-#define VIRTIO_NET_F_HOST_ECN	0x02000 /* Host can handle TSO[6] w/ ECN in. */
-#define VIRTIO_NET_F_HOST_UFO	0x04000 /* Host can handle UFO in. */
-#define VIRTIO_NET_F_MRG_RXBUF	0x08000 /* Host can merge receive buffers. */
-#define VIRTIO_NET_F_STATUS	0x10000 /* virtio_net_config.status available*/
-#define VIRTIO_NET_F_CTRL_VQ	0x20000 /* Control channel available */
-#define VIRTIO_NET_F_CTRL_RX	0x40000 /* Control channel RX mode support */
-#define VIRTIO_NET_F_CTRL_VLAN	0x80000 /* Control channel VLAN filtering */
-#define VIRTIO_NET_F_CTRL_RX_EXTRA 0x100000 /* Extra RX mode control support */
-#define VIRTIO_NET_F_GUEST_ANNOUNCE 0x200000 /* Announce device on network */
-#define VIRTIO_NET_F_MQ		0x400000 /* Device supports RFS */
-#define VIRTIO_NET_F_CTRL_MAC_ADDR 0x800000 /* Set MAC address */
+#define VIRTIO_NET_F_CSUM		(1 << 0)  /* Host handles pkts w/ partial csum */
+#define VIRTIO_NET_F_GUEST_CSUM (1 << 1)  /* Guest handles pkts w/ partial csum*/
+#define VIRTIO_NET_F_MTU		(1 << 3)  /* Initial MTU advice */
+#define VIRTIO_NET_F_MAC		(1 << 5)  /* Host has given MAC address. */
+#define VIRTIO_NET_F_GSO		(1 << 6)  /* Host handles pkts w/ any GSO type
+										     (deprecated) */
+#define VIRTIO_NET_F_GUEST_TSO4	(1 << 7)  /* Guest can handle TSOv4 in. */
+#define VIRTIO_NET_F_GUEST_TSO6	(1 << 8)  /* Guest can handle TSOv6 in. */
+#define VIRTIO_NET_F_GUEST_ECN	(1 << 9)  /* Guest can handle TSO[6] w/ ECN in.*/
+#define VIRTIO_NET_F_GUEST_UFO	(1 << 10) /* Guest can handle UFO in. */
+#define VIRTIO_NET_F_HOST_TSO4	(1 << 11) /* Host can handle TSOv4 in. */
+#define VIRTIO_NET_F_HOST_TSO6	(1 << 12) /* Host can handle TSOv6 in. */
+#define VIRTIO_NET_F_HOST_ECN	(1 << 13) /* Host can handle TSO[6] w/ ECN in. */
+#define VIRTIO_NET_F_HOST_UFO	(1 << 14) /* Host can handle UFO in. */
+#define VIRTIO_NET_F_MRG_RXBUF	(1 << 15) /* Host can merge receive buffers. */
+#define VIRTIO_NET_F_STATUS		(1 << 16) /* virtio_net_config.status available*/
+#define VIRTIO_NET_F_CTRL_VQ	(1 << 17) /* Control channel available */
+#define VIRTIO_NET_F_CTRL_RX	(1 << 18) /* Control channel RX mode support */
+#define VIRTIO_NET_F_CTRL_VLAN	(1 << 19)/* Control channel VLAN filtering */
+#define VIRTIO_NET_F_CTRL_RX_EXTRA (1 << 20) /* Extra RX mode control support */
+#define VIRTIO_NET_F_GUEST_ANNOUNCE (1 << 21) /* Guest can announce device on network */
+#define VIRTIO_NET_F_MQ				(1 << 22) /* Device supports RFS */
+#define VIRTIO_NET_F_CTRL_MAC_ADDR  (1 << 23) /* Set MAC address */
 
 #define VIRTIO_NET_S_LINK_UP	1	/* Link is up */
+#define VIRTIO_NET_S_ANNOUNCE	2 	/* Announcement is needed */
 
 struct virtio_net_config {
 	/* The config defining mac address (if VIRTIO_NET_F_MAC) */
@@ -66,6 +69,8 @@ struct virtio_net_config {
 	 * Legal values are between 1 and 0x8000.
 	 */
 	uint16_t	max_virtqueue_pairs;
+	/* Default Maximum Transmit Unit advice (if VIRTIO_NET_F_MTU) */
+	uint16_t	mtu;
 } _PACKED;
 
 /*

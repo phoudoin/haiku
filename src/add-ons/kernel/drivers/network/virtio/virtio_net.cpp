@@ -73,8 +73,10 @@ get_feature_name(uint32 feature)
 			return "host checksum";
 		case VIRTIO_NET_F_GUEST_CSUM:
 			return "guest checksum";
+		case VIRTIO_NET_F_MTU:
+			return "mtu advice";
 		case VIRTIO_NET_F_MAC:
-			return "macaddress";
+			return "mac address";
 		case VIRTIO_NET_F_GSO:
 			return "host allgso";
 		case VIRTIO_NET_F_GUEST_TSO4:
@@ -110,7 +112,7 @@ get_feature_name(uint32 feature)
 		case VIRTIO_NET_F_MQ:
 			return "multiqueue";
 		case VIRTIO_NET_F_CTRL_MAC_ADDR:
-			return "set macaddress";
+			return "set mac address";
 	}
 	return NULL;
 }
@@ -131,7 +133,10 @@ virtio_net_init_device(void* _info, void** _cookie)
 	sDeviceManager->put_node(parent);
 
 	info->virtio->negociate_features(info->virtio_device,
-		0 /*  */, &info->features, &get_feature_name);
+		VIRTIO_NET_F_MAC |
+		VIRTIO_NET_F_STATUS |
+		VIRTIO_NET_F_MTU,
+		&info->features, &get_feature_name);
 
 	if ((info->features & VIRTIO_NET_F_MQ) != 0
 			&& info->virtio->read_device_config(info->virtio_device,
@@ -168,9 +173,10 @@ virtio_net_init_device(void* _info, void** _cookie)
 	}
 
 	// TODO setup interrupts
+	status = info->virtio->setup_interrupt(info->virtio_device, NULL, info);
 
 	*_cookie = info;
-	return B_OK;
+	return status;
 }
 
 
@@ -178,7 +184,7 @@ static void
 virtio_net_uninit_device(void* _cookie)
 {
 	CALLED();
-	virtio_net_driver_info* info = (virtio_net_driver_info*)_cookie;
+	// virtio_net_driver_info* info = (virtio_net_driver_info*)_cookie;
 }
 
 
@@ -233,7 +239,7 @@ static status_t
 virtio_net_read(void* cookie, off_t pos, void* buffer, size_t* _length)
 {
 	CALLED();
-	virtio_net_handle* handle = (virtio_net_handle*)cookie;
+	// virtio_net_handle* handle = (virtio_net_handle*)cookie;
 	// TODO implement
 	return B_ERROR;
 }
@@ -244,7 +250,7 @@ virtio_net_write(void* cookie, off_t pos, const void* buffer,
 	size_t* _length)
 {
 	CALLED();
-	virtio_net_handle* handle = (virtio_net_handle*)cookie;
+	// virtio_net_handle* handle = (virtio_net_handle*)cookie;
 	// TODO implement
 	return B_ERROR;
 }
@@ -257,7 +263,7 @@ virtio_net_ioctl(void* cookie, uint32 op, void* buffer, size_t length)
 	virtio_net_handle* handle = (virtio_net_handle*)cookie;
 	virtio_net_driver_info* info = handle->info;
 
-	TRACE("ioctl(op = %lx)\n", op);
+	TRACE("ioctl(op = 0x%" B_PRIx32 ")\n", op);
 
 	switch (op) {
 		case ETHER_GETADDR:
