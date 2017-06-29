@@ -40,20 +40,20 @@
 										     (deprecated) */
 #define VIRTIO_NET_F_GUEST_TSO4	(1 << 7)  /* Guest can handle TSOv4 in. */
 #define VIRTIO_NET_F_GUEST_TSO6	(1 << 8)  /* Guest can handle TSOv6 in. */
-#define VIRTIO_NET_F_GUEST_ECN	(1 << 9)  /* Guest can handle TSO[6] w/ ECN in.*/
-#define VIRTIO_NET_F_GUEST_UFO	(1 << 10) /* Guest can handle UFO in. */
-#define VIRTIO_NET_F_HOST_TSO4	(1 << 11) /* Host can handle TSOv4 in. */
-#define VIRTIO_NET_F_HOST_TSO6	(1 << 12) /* Host can handle TSOv6 in. */
-#define VIRTIO_NET_F_HOST_ECN	(1 << 13) /* Host can handle TSO[6] w/ ECN in. */
-#define VIRTIO_NET_F_HOST_UFO	(1 << 14) /* Host can handle UFO in. */
-#define VIRTIO_NET_F_MRG_RXBUF	(1 << 15) /* Host can merge receive buffers. */
-#define VIRTIO_NET_F_STATUS		(1 << 16) /* virtio_net_config.status available*/
-#define VIRTIO_NET_F_CTRL_VQ	(1 << 17) /* Control channel available */
-#define VIRTIO_NET_F_CTRL_RX	(1 << 18) /* Control channel RX mode support */
-#define VIRTIO_NET_F_CTRL_VLAN	(1 << 19)/* Control channel VLAN filtering */
-#define VIRTIO_NET_F_CTRL_RX_EXTRA (1 << 20) /* Extra RX mode control support */
+#define VIRTIO_NET_F_GUEST_ECN  (1 << 9)  /* Guest can handle TSO[6] w/ ECN in.*/
+#define VIRTIO_NET_F_GUEST_UFO  (1 << 10) /* Guest can handle UFO in. */
+#define VIRTIO_NET_F_HOST_TSO4  (1 << 11) /* Host can handle TSOv4 in. */
+#define VIRTIO_NET_F_HOST_TSO6  (1 << 12) /* Host can handle TSOv6 in. */
+#define VIRTIO_NET_F_HOST_ECN   (1 << 13) /* Host can handle TSO[6] w/ ECN in. */
+#define VIRTIO_NET_F_HOST_UFO   (1 << 14) /* Host can handle UFO in. */
+#define VIRTIO_NET_F_MRG_RXBUF  (1 << 15) /* Host can merge receive buffers. */
+#define VIRTIO_NET_F_STATUS     (1 << 16) /* virtio_net_config.status available*/
+#define VIRTIO_NET_F_CTRL_VQ    (1 << 17) /* Control channel available */
+#define VIRTIO_NET_F_CTRL_RX    (1 << 18) /* Control channel RX mode support */
+#define VIRTIO_NET_F_CTRL_VLAN  (1 << 19)/* Control channel VLAN filtering */
+#define VIRTIO_NET_F_CTRL_RX_EXTRA  (1 << 20) /* Extra RX mode control support */
 #define VIRTIO_NET_F_GUEST_ANNOUNCE (1 << 21) /* Guest can announce device on network */
-#define VIRTIO_NET_F_MQ				(1 << 22) /* Device supports RFS */
+#define VIRTIO_NET_F_MQ             (1 << 22) /* Device supports RFS */
 #define VIRTIO_NET_F_CTRL_MAC_ADDR  (1 << 23) /* Set MAC address */
 
 #define VIRTIO_NET_S_LINK_UP	1	/* Link is up */

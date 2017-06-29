@@ -29,8 +29,9 @@ typedef struct {
 	uint32 					features;
 
 	uint32					pairs_count;
-	::virtio_queue*			receive_queues;
-	::virtio_queue*			send_queues;
+	::virtio_queue*			rx_queues;
+	::virtio_queue*			tx_queues;
+	::virtio_queue			control_queue;
 
 
 	bool					nonblocking;
@@ -135,7 +136,8 @@ virtio_net_init_device(void* _info, void** _cookie)
 	info->virtio->negociate_features(info->virtio_device,
 		VIRTIO_NET_F_MAC |
 		VIRTIO_NET_F_STATUS |
-		VIRTIO_NET_F_MTU,
+		VIRTIO_NET_F_MTU |
+		VIRTIO_NET_F_CTRL_VQ,
 		&info->features, &get_feature_name);
 
 	if ((info->features & VIRTIO_NET_F_MQ) != 0
@@ -155,6 +157,9 @@ virtio_net_init_device(void* _info, void** _cookie)
 	uint32 queueCount = info->pairs_count * 2;
 	if ((info->features & VIRTIO_NET_F_CTRL_VQ) != 0)
 		queueCount++;
+
+	TRACE("queues count: %d\n", queueCount);
+
 	::virtio_queue virtioQueues[queueCount];
 	status_t status = info->virtio->alloc_queues(info->virtio_device, queueCount,
 		virtioQueues);
@@ -163,14 +168,26 @@ virtio_net_init_device(void* _info, void** _cookie)
 		return status;
 	}
 
-	info->receive_queues = new(std::nothrow) virtio_queue[info->pairs_count];
-	info->send_queues = new(std::nothrow) virtio_queue[info->pairs_count];
-	if (info->receive_queues == NULL || info->send_queues == NULL)
+	info->rx_queues = new(std::nothrow) virtio_queue[info->pairs_count];
+	info->tx_queues = new(std::nothrow) virtio_queue[info->pairs_count];
+	if (info->rx_queues == NULL || info->tx_queues == NULL)
 		return B_NO_MEMORY;
 	for (uint32 i = 0; i < info->pairs_count; i++) {
-		info->receive_queues[i] = virtioQueues[i * 2];
-		info->send_queues[i] = virtioQueues[i * 2 + 1];
+		info->rx_queues[i] = virtioQueues[i * 2];
+		info->tx_queues[i] = virtioQueues[i * 2 + 1];
+		TRACE("rx_queues[%d] size: %d\n", i,
+			info->virtio->queue_size(info->rx_queues[i]));
+		TRACE("tx_queues[%d] size: %d\n", i,
+			info->virtio->queue_size(info->tx_queues[i]));
 	}
+	if ((info->features & VIRTIO_NET_F_CTRL_VQ) != 0) {
+		info->control_queue = virtioQueues[queueCount - 1];
+		TRACE("control_queue size: %d\n",
+			info->virtio->queue_size(info->control_queue));
+	}
+
+	// TODO setup rx buffers
+	// TODO setup tx virtio_net_hdr header(s?)
 
 	// TODO setup interrupts
 	status = info->virtio->setup_interrupt(info->virtio_device, NULL, info);
@@ -238,7 +255,7 @@ virtio_net_free(void* cookie)
 static status_t
 virtio_net_read(void* cookie, off_t pos, void* buffer, size_t* _length)
 {
-	CALLED();
+	// CALLED();
 	// virtio_net_handle* handle = (virtio_net_handle*)cookie;
 	// TODO implement
 	return B_ERROR;
@@ -249,7 +266,7 @@ static status_t
 virtio_net_write(void* cookie, off_t pos, const void* buffer,
 	size_t* _length)
 {
-	CALLED();
+	// CALLED();
 	// virtio_net_handle* handle = (virtio_net_handle*)cookie;
 	// TODO implement
 	return B_ERROR;
@@ -259,11 +276,11 @@ virtio_net_write(void* cookie, off_t pos, const void* buffer,
 static status_t
 virtio_net_ioctl(void* cookie, uint32 op, void* buffer, size_t length)
 {
-	CALLED();
+	// CALLED();
 	virtio_net_handle* handle = (virtio_net_handle*)cookie;
 	virtio_net_driver_info* info = handle->info;
 
-	TRACE("ioctl(op = 0x%" B_PRIx32 ")\n", op);
+	// TRACE("ioctl(op = 0x%" B_PRIx32 ")\n", op);
 
 	switch (op) {
 		case ETHER_GETADDR:
